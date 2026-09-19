@@ -1,0 +1,81 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.2'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.lastdance'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    //spring
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    //jpa
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    //lombok
+    annotationProcessor 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
+
+    // AWS S3 (스프링 부트 3.3.x 환경에서 정상 지원되는 공식 최신 버전, S3Template 자동 구성 사용)
+    implementation platform('io.awspring.cloud:spring-cloud-aws-dependencies:4.1.1')
+    implementation('io.awspring.cloud:spring-cloud-aws-starter-s3') {
+        // 스프링 부트 BOM이 httpclient5 버전을 낮게 고정해 apache5-client와 충돌 -> url-connection-client로 대체
+        exclude group: 'software.amazon.awssdk', module: 'apache5-client'
+    }
+    implementation 'software.amazon.awssdk:url-connection-client'
+
+    // REST Docs API Spec (스프링 부트 3.x jakarta 패키지 호환 최신 버전)
+    testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.19.4'
+
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+
+
+    // Spring security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    //JWT token
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    // com.sun.xml.bind
+    implementation 'com.sun.xml.bind:jaxb-impl:4.0.1'
+    implementation 'com.sun.xml.bind:jaxb-core:4.0.1'
+    // javax.xml.bind
+    implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
+
+    //websocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket:3.3.2'
+
+    //firebase
+    implementation 'com.google.firebase:firebase-admin:9.10.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+
+}
+
+tasks.named('bootBuildImage') {
+    builder = 'paketobuildpacks/builder-jammy-base:latest'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

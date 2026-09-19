@@ -1,0 +1,19 @@
+# Claude Code (설정, 메모리, 지침 파일)
+.claude/
+**/.claude/
+CLAUDE.md
+**/CLAUDE.md
+CLAUDE.local.md
+**/CLAUDE.local.md
+
+# JVM 크래시 로그
+hs_err_pid*.log
+replay_pid*.log
+
+# 로그 / OS / IDE
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
