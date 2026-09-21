@@ -61,7 +61,8 @@ class SignalingMessage {
 // 시그널링 연결 최종 실패(재연결 3회 소진) 시 발생하는 에러
 class SignalingConnectionException implements Exception {
   const SignalingConnectionException([
-    this.message = '시그널링 서버에 연결할 수 없습니다.',
+    this.message =
+        '시그널링 서버에 연결할 수 없습니다.\n(※ 상시 비용 문제로 인해 백엔드 인프라 구동을 잠시 중단한 상태입니다. 양해 바랍니다.)',
   ]);
 
   final String message;
