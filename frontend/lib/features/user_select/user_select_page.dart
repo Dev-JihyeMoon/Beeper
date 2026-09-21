@@ -1,6 +1,7 @@
 // 사용자 유형 선택 페이지 (서비스 진입점, 요청자/봉사자 흐름 분기)
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../config/routes.dart';
 import '../../config/theme.dart';
@@ -11,9 +12,55 @@ import '../../shared/widgets/pulse_animation.dart';
 class UserSelectPage extends StatelessWidget {
   const UserSelectPage({super.key});
 
+  static const String _repoUrl = 'https://github.com/Dev-JihyeMoon/Beeper';
+
   @override
   Widget build(BuildContext context) {
+    // 하단 안내 문구 (백엔드 중단 안내 + GitHub 링크)
+    final noticeStyle = BeeperTypography.labelSmall.copyWith(
+      fontSize: 11,
+      color: BeeperColors.textPrimary.withValues(alpha: 0.6),
+    );
+
     return BeeperScaffold(
+      bottomBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '※ 상시 비용 문제로 인해 백엔드 인프라 구동이 중지된 상태일 수 있습니다. 양해 바랍니다.',
+            textAlign: TextAlign.center,
+            style: noticeStyle,
+          ),
+          const SizedBox(height: 4),
+          // 문구 전체를 탭하면 GitHub 저장소로 이동 (주소 부분만 밑줄 표시)
+          Semantics(
+            link: true,
+            label: 'GitHub 저장소 열기',
+            child: InkWell(
+              onTap: () => launchUrl(
+                Uri.parse(_repoUrl),
+                mode: LaunchMode.externalApplication,
+              ),
+              child: Text.rich(
+                TextSpan(
+                  style: noticeStyle,
+                  children: [
+                    const TextSpan(text: '※ 구동화면 및 자세한 내용은 ('),
+                    TextSpan(
+                      text: _repoUrl,
+                      style: const TextStyle(
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                    const TextSpan(text: ') 에서 확인 가능합니다.'),
+                  ],
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: BeeperSpacing.s48),
         child: Column(

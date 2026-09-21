@@ -143,18 +143,14 @@ class ApiClient {
     }
   }
 
-  // 서버 연결 실패 문구 하단에 붙는 안내
-  static const String _infraNotice =
-      '(※ 상시 비용 문제로 인해 백엔드 인프라 구동을 잠시 중단한 상태입니다. 양해 바랍니다.)';
-
   String _networkMessageFor(DioException e) {
     switch (e.type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        return '서버 응답이 지연되고 있습니다. 잠시 후 다시 시도해 주세요.\n$_infraNotice';
+        return '서버 응답이 지연되고 있습니다. 잠시 후 다시 시도해 주세요.';
       case DioExceptionType.connectionError:
-        return '서버에 연결할 수 없습니다. 네트워크 상태를 확인해 주세요.\n$_infraNotice';
+        return '서버에 연결할 수 없습니다. 네트워크 상태를 확인해 주세요.';
       default:
         return '네트워크 오류가 발생했습니다.';
     }
