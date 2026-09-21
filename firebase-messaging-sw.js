@@ -1,0 +1,44 @@
+// 웹 백그라운드/종료 상태에서 FCM 메시지를 받아 브라우저 알림으로 표시하는 서비스 워커
+// 서비스 워커는 Dart의 secrets.dart 값을 읽을 수 없어 firebaseConfig를 직접 채워야 함 (README.md 참고)
+
+importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
+
+firebase.initializeApp({
+  apiKey: 'AIzaSyCrwDR0Sg49l77v2JkNQC-QoRpemuO75dA',
+  authDomain: 'beeper-1b0c8.firebaseapp.com',
+  projectId: 'beeper-1b0c8',
+  storageBucket: 'beeper-1b0c8.firebasestorage.app',
+  messagingSenderId: '620437176081',
+  appId: '1:620437176081:web:ba359d4337d543a7f356b0',
+});
+
+const messaging = firebase.messaging();
+
+// 백엔드는 notification 없이 data-only 메시지만 보냄 (FCMServiceImpl.java 참고)
+// data-only는 브라우저가 알림을 자동으로 띄우지 않으므로 payload.data로 직접 showNotification 호출
+messaging.onBackgroundMessage((payload) => {
+  const data = payload.data || {};
+  const title = data.title || '새 알림';
+  const body = data.description || (data.type === 'HELP_REQUEST_ACCEPTED' ? '봉사자가 도움 요청을 수락했습니다.' : '');
+
+  self.registration.showNotification(title, {
+    body: body,
+    data: data,
+  });
+});
+
+// 알림 클릭 시 앱 탭으로 포커스 이동, 없으면 새 탭 열기
+// 이후 화면 이동은 Flutter의 onMessageOpenedApp/getInitialMessage가 처리
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+      for (const client of windowClients) {
+        if ('focus' in client) return client.focus();
+      }
+      if (clients.openWindow) return clients.openWindow('/');
+    })
+  );
+});
+
